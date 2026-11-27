@@ -1,4 +1,27 @@
+
 package vn.rikkei.cinemabox.showtime;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import vn.rikkei.cinemabox.common.ResourceNotFoundException;
+
+@Service
 public class ShowtimeService {
+
+    private final ShowtimeRepository repository;
+
+    public ShowtimeService(ShowtimeRepository repository) {
+        this.repository = repository;
+    }
+
+    @Transactional(readOnly = true)
+    public ShowtimeResponse getById(Long id) {
+        Showtime showtime = repository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Không tìm thấy suất chiếu id=" + id
+                        ));
+
+        return ShowtimeResponse.from(showtime);
+    }
 }
